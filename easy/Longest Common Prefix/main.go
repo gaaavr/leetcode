@@ -1,35 +1,50 @@
 package main
 
 import (
-	"fmt"
+	"strings"
 )
 
-func main() {
-	fmt.Println(isValid("[[]]"))
-}
+// Write a function to find the longest common prefix string amongst an array of strings.
+// If there is no common prefix, return an empty string "".
 
-func isValid(s string) bool {
-	m := map[rune]rune{
-		')': '(',
-		']': '[',
-		'}': '{',
+func longestCommonPrefix(strs []string) string {
+	var count, prevCount string
+	if len(strs) == 1 {
+		return strs[0]
 	}
-	arr := make([]rune, 0)
-	for _, v := range s {
-		if v == '(' || v == '[' || v == '{' {
-			arr = append(arr, v)
-			continue
+	var min int
+	for i := 1; i < len(strs); i++ {
+		if strs[i] == "" || strs[i-1] == "" {
+			return ""
+		}
+		if len(strs[i]) < len(strs[i-1]) {
+			min = len(strs[i])
 		} else {
-			lastIdx := len(arr) - 1
-			if lastIdx == -1 {
-				return false
+			min = len(strs[i-1])
+		}
+		for j := 0; j < min; j++ {
+			if i == 1 {
+				if strs[i][j] != strs[i-1][j] {
+					prevCount = count
+					break
+				}
+				if j == len(strs[i])-1 {
+					count += string(strs[i][j])
+					prevCount = count
+					break
+				}
+				count += string(strs[i][j])
+				continue
 			}
-			if arr[lastIdx] == m[v] {
-				arr = arr[:lastIdx]
+			if strings.HasPrefix(prevCount, count+string(strs[i][j])) {
+				count += string(strs[i][j])
+				continue
 			} else {
-				return false
+				break
 			}
 		}
+		prevCount = count
+		count = ""
 	}
-	return len(arr) == 0
+	return prevCount
 }
